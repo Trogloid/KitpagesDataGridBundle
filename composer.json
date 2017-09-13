@@ -1,9 +1,9 @@
 {
-    "name": "trogloid/data-grid-bundle",
+    "name": "kitpages/data-grid-bundle",
     "type": "symfony-bundle",
     "description": "Symfony DataGridBundle",
     "keywords": ["Datagrid", "paginator", "filter", "sort"],
-    "homepage": "https://github.com/trogloid/KitpagesDataGridBundle",
+    "homepage": "https://github.com/kitpages/KitpagesDataGridBundle",
     "license": "MIT",
     "authors": [
         {
@@ -13,26 +13,26 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/framework-bundle": "^3.3",
-        "doctrine/orm": "^2.5",
-        "doctrine/doctrine-bundle": "^1.7",
-        "twig/twig": "~2.4",
-        "symfony/twig-bundle": "~2.8|~3.0"
+        "symfony/framework-bundle": "*",
+        "doctrine/orm": "*",
+        "doctrine/doctrine-bundle": "*",
+        "twig/twig": "*",
+        "symfony/twig-bundle": "*"
     },
     "require-dev": {
-        "symfony/class-loader": "^3.3",
-        "symfony/yaml": "^3.3",
-        "symfony/finder": "^3.3",
-        "symfony/browser-kit": "^3.3",
+        "symfony/class-loader": "*",
+        "symfony/yaml": "*",
+        "symfony/finder": "*",
+        "symfony/browser-kit": "*",
 
         "beberlei/DoctrineExtensions": "0.3.0",
-        "phpunit/phpunit": "~3.7",
-        "phpunit/dbunit": "~1.3.1",
+        "phpunit/phpunit": "*",
+        "phpunit/dbunit": "*",
 
-        "patchwork/dumper": "~1.2"
+        "patchwork/dumper": "*"
     },
     "autoload": {
-        "psr-0": { "Trogloid\\DataGridBundle": "" }
+        "psr-0": { "Kitpages\\DataGridBundle": "" }
     },
-    "target-dir": "Trogloid/DataGridBundle"
+    "target-dir": "Kitpages/DataGridBundle"
 }
