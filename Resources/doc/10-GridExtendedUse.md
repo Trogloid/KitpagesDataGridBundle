@@ -23,16 +23,16 @@ If you want to change the result number on each page for example.
         $gridConfig
             ->setQueryBuilder($queryBuilder)
             ->setCountFieldName('ol.id')
-            ->addField(new Field('ol.id', array('sortable' => true)))
-            ->addField(new Field('ol.shopReference', array(
+            ->addField('ol.id', array('sortable' => true))
+            ->addField('ol.shopReference', array(
                 'label' => 'Ref',
                 'filterable' => true,
                 'sortable' => true
-            )))
-            ->addField(new Field('ol.updatedAt', array(
+            ))
+            ->addField('ol.updatedAt', array(
                 'sortable' => true,
                 'formatValueCallback' => function ($value) { return $value->format('Y/m/d'); }
-            )))
+            ))
         ;
 
         // paginator configuration
@@ -44,7 +44,7 @@ If you want to change the result number on each page for example.
         ;
         $gridConfig->setPaginatorConfig($gridPaginatorConfig);
 
-        $grid = $gridManager->getGrid($gridConfig, $this->getRequest());
+        $grid = $gridManager->getGrid($gridConfig, $request;
 
         return $this->render('AppSiteBundle:Default:grid.html.twig', array(
             'grid' => $grid
@@ -143,10 +143,10 @@ And add the subscriber to the event listener. This is an example in a service.xm
 
 Select recursive field
 ----------------------
-If you have for exemple a categorie table which as a recursion with parent_id, you must use 
+If you have for exemple a categorie table which as a recursion with parent_id, you must use
 the leftJoin() condition in your queryBuilder.
 
-    public function gridAction()
+    public function gridAction(Request $request)
     {
         $em = $this->getDoctrine()->getEntityManager();
         $queryBuilder = $em->createQueryBuilder();
@@ -160,15 +160,15 @@ the leftJoin() condition in your queryBuilder.
         $gridConfig
             ->setQueryBuilder($queryBuilder)
             ->setCountFieldName('c.id')
-            ->addField(new Field('c.foo')
-            ->addField(new Field('c.idParent', array(
+            ->addField('c.foo')
+            ->addField('c.idParent', array(
                 'label' => 'Parent',
                 'formatValueCallback' => function($value) { return (!empty($value)) ? $value['foo'] : 'None'; }
-            )))
+            ))
         ;
 
         $gridManager = $this->get('kitpages_data_grid.grid_manager');
-        $grid = $gridManager->getGrid($gridConfig, $this->getRequest());
+        $grid = $gridManager->getGrid($gridConfig, $request);
 
         return $this->render('MySiteBundle:Default:grid.html.twig', array(
             'grid' => $grid
@@ -179,17 +179,17 @@ Select collection from a 1-n relationship
 -----------------------------------------
 If you have for exemple an article with a comments property wich is a 1-n relationship. You have the article id and you want to create a grid for the article's comments :
 
-    public function gridAction()
+    public function gridAction(Request $request)
     {
         $manager = $this->getDoctrine()->getManager();
-        
+
         /* @var $qb \Doctrine\ORM\QueryBuilder */
         $qb = $manager->createQueryBuilder('comments-list');
         $qb->select('c1')
             ->from('Acme\MyBundle\Entity\Comment', 'c1')
             ->where(
                 $qb->expr()->in(
-                    'c1.id', 
+                    'c1.id',
                     $manager->createQueryBuilder('articles')
                         ->select('c2.id')
                         ->from('Acme\MyBundle\Entity\Article', 'a')
@@ -205,11 +205,11 @@ If you have for exemple an article with a comments property wich is a 1-n relati
         $gridConfig = new GridConfig();
         $gridConfig->setQueryBuilder($qb)
         $gridConfig->setCountFieldName("c1.id");
-        $gridConfig->addField(new Field("c1.comment", array("label" => "Comment")));
-        $gridConfig->addField(new Field("c1.author", array("label" => "Author", "filterable" => true, "sortable" => true)));
+        $gridConfig->addField("c1.comment", array("label" => "Comment"));
+        $gridConfig->addField("c1.author", array("label" => "Author", "filterable" => true, "sortable" => true));
 
         $gridManager = $this->get("kitpages_data_grid.grid_manager");
-        $grid = $gridManager->getGrid($gridConfig, $this->getRequest());
+        $grid = $gridManager->getGrid($gridConfig, $request);
 
         return $this->render('MySiteBundle:Default:grid.html.twig', array(
             'grid' => $grid
@@ -221,25 +221,25 @@ formatValueCallback
 If you want to format a data, you can use a simple callback. For example, if a data is a dateTime, you can format
 use that code :
 
-    $gridConfig->addField(new Field(
+    $gridConfig->addField(
         'ol.updatedAt',
         array(
             'label' => 'Updated at',
             'sortable'=>true,
             'formatValueCallback' => function($value) { return $value->format('Y/m/d'); }
         )
-    ));
+    );
 
 You can also have a second argument in your callback that will receive the entire row received from the query.
 
-    $gridConfig->addField(new Field(
+    $gridConfig->addField(
         'ol.updatedAt',
         array(
             'label' => 'Date and Id',
             'sortable' => true,
             'formatValueCallback' => function($value, $row) { return $value->format('Y/m/d') . '--' . $row['id']; }
         )
-    ));
+    );
 
 
 Add selector action (to filter on a field with a value)
@@ -271,8 +271,8 @@ added before the count field.
     $gridConfig
         ->setQueryBuilder($queryBuilder)
         ->setCountFieldName('item.type')
-        ->addField(new Field('item.type'))
-        ->addField(new Field('cnt'))
+        ->addField('item.type')
+        ->addField('cnt')
     ;
 
 
@@ -285,7 +285,7 @@ You can format a data with a twig template by using the callback system :
     // get templating service
     $twig = $this->get('templating');
     // add the field
-    $gridConfig->addField(new Field(
+    $gridConfig->addField(
         'ol.updatedAt',
         array(
             "formatValueCallback"=>function($value, $row) use ($twig) {
@@ -293,7 +293,7 @@ You can format a data with a twig template by using the callback system :
             },
             "autoEscape" => false
         )
-    ));
+    );
 
 And the twig file could be grid-element.html.twig in the right bundle :
 
@@ -334,3 +334,17 @@ Let's see in this example how to add checkboxes on the left of the grid for mult
 
 You can see all the extension points of the data grid template in the
 file [views/Grid/grid.html.twig](https://github.com/kitpages/KitpagesDataGridBundle/blob/master/Resources/views/Grid/grid.html.twig)
+
+
+Add class to a table row
+-----------------------------------------------
+
+You can add a table row class by extending `kit_grid_row_class` block:
+
+    {% embed kitpages_data_grid.grid.default_twig with {'grid': grid} %}
+
+        {% block kit_grid_row_class %}
+            {% if item['t.deletedAt'] %} stroke {% endif %}
+        {% endblock %}
+
+    {% endembed %}

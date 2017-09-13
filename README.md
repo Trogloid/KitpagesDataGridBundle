@@ -17,6 +17,8 @@ Actual state
 
 * v1.x is stable, production ready
 * v2.x is stable and production ready
+ * v2.5.x is following version 2.5.x of doctrine
+ * v2.4.x is following version 2.4.x of doctrine
 
 Features
 ========
@@ -56,7 +58,7 @@ Add KitpagesChainBundle in your composer.json
 ```js
 {
     "require": {
-        "kitpages/data-grid-bundle": "~2.0"
+        "kitpages/data-grid-bundle": "~2.4" // Use ~2.5 if you use doctrine >= 2.5
     }
 }
 ```
@@ -110,10 +112,11 @@ Simple Usage example
 ```php
 use Kitpages\DataGridBundle\Grid\GridConfig;
 use Kitpages\DataGridBundle\Grid\Field;
+use Symfony\Component\HttpFoundation\Request;
 
 class ContactController
 {
-    public function productListAction()
+    public function productListAction(Request $request)
     {
         // create query builder
         $repository = $this->getDoctrine()->getRepository('AcmeStoreBundle:Product');
@@ -126,19 +129,16 @@ class ContactController
         $gridConfig
             ->setQueryBuilder($queryBuilder)
             ->setCountFieldName('item.id')
-            ->addField(new Field('item.id'))
-            ->addField(new Field('item.slug', array('filterable' => true)))
-            ->addField(new Field(
-                'item.updatedAt',
-                array(
-                    'sortable' => true,
-                    'formatValueCallback' => function($value) { return $value->format('Y/m/d'); }
-                )
+            ->addField('item.id')
+            ->addField('item.slug', array('filterable' => true))
+            ->addField('item.updatedAt', array(
+                'sortable' => true,
+                'formatValueCallback' => function($value) { return $value->format('Y/m/d'); }
             ))
         ;
 
         $gridManager = $this->get('kitpages_data_grid.grid_manager');
-        $grid = $gridManager->getGrid($gridConfig, $this->getRequest());
+        $grid = $gridManager->getGrid($gridConfig, $request);
 
         return $this->render('AppSiteBundle:Default:productList.html.twig', array(
             'grid' => $grid
@@ -185,11 +185,12 @@ More advanced usage
 ```php
 use Kitpages\DataGridBundle\Grid\GridConfig;
 use Kitpages\DataGridBundle\Grid\Field;
+use Symfony\Component\HttpFoundation\Request;
 
 class AdminController extends Controller
 {
 
-    public function listAction($state)
+    public function listAction(Request $request, $state)
     {
         // create query builder
         $em = $this->get('doctrine')->getEntityManager();
@@ -207,15 +208,15 @@ class AdminController extends Controller
         $gridConfig
             ->setQueryBuilder($queryBuilder)
             ->setCountFieldName("m.id");
-            ->addField(new Field('m.title', array('label' => 'title', 'filterable' => true)))
-            ->addField(new Field('m.country', array('filterable' => true)))
-            ->addField(new Field('c.corporation', array('filterable' => true)))
-            ->addField(new Field('e.lastname', array('filterable' => true)))
-            ->addField(new Field('e.email', array('filterable' => true)))
+            ->addField('m.title', array('label' => 'title', 'filterable' => true))
+            ->addField('m.country', array('filterable' => true))
+            ->addField('c.corporation', array('filterable' => true))
+            ->addField('e.lastname', array('filterable' => true))
+            ->addField('e.email', array('filterable' => true))
         ;
 
         $gridManager = $this->get('kitpages_data_grid.grid_manager');
-        $grid = $gridManager->getGrid($gridConfig, $this->getRequest());
+        $grid = $gridManager->getGrid($gridConfig, $request);
 
         return $this->render('KitappMissionBundle:Admin:list.html.twig', array(
             'grid' => $grid
@@ -237,8 +238,8 @@ For request like
 
 You can display the foo field with
 
-    $gridConfig->addField(new Field("item.id"));
-    $gridConfig->addField(new Field("foo"));
+    $gridConfig->addField("item.id");
+    $gridConfig->addField("foo");
 
 
 Events
@@ -257,7 +258,7 @@ Reference guide
 when you add a field, you can set these parameters :
 
 ```php
-$gridConfig->addField(new Field('slug', array(
+$gridConfig->addField('slug', array(
     'label' => 'Mon slug',
     'sortable' => false,
     'visible' => true,
@@ -267,7 +268,7 @@ $gridConfig->addField(new Field('slug', array(
     'autoEscape' => true,
     'category' => null, // only used by you for checking this value in your events if you want to...
     'nullIfNotExists' => false, // for leftJoin, if value is not defined, this can return null instead of an exception
-)));
+));
 ```
 
 ## What can you personalize in your twig template
